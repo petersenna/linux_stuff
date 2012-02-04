@@ -1,0 +1,42 @@
+#!/bin/bash
+# Peter Senna Tschudin - peter.senna AT gmail.com
+# Nagios Plugin to check GrandStream 486 VoIP ATA Connection Status
+
+PASS= #GrandStream User Password goes here
+ 
+SERVER=$1
+
+STATE_OK=0
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+COOKIE_FILE=/tmp/cookiesg486.txt
+ 
+#echo testing!
+#exit $STATE_CRITICAL
+ 
+# Delete temp file
+rm -rf $COOKIE_FILE
+ 
+# Authenticate with password
+/usr/bin/wget -q --keep-session-cookies --save-cookies $COOKIE_FILE --post-data "P2=$PASS" http://$SERVER/dologin.htm -O - >/dev/null 2>/dev/null
+ 
+# Look for 'Yes' to see if is it registered at SIP server
+/usr/bin/wget -q --load-cookies $COOKIE_FILE http://$SERVER/index.htm -O - |grep Yes >/dev/null 2>/dev/null
+RET=$?
+ 
+if [ $RET == 1 ]; then
+	echo NOT CONNECTED!
+	rm -rf /tmp/cookiesg486.txt
+	exit $STATE_CRITICAL
+fi
+ 
+if [ $RET == 0 ]; then
+	# Look for line containing 'day' and remove </td> at the end
+	echo Connected for: `/usr/bin/wget -q --load-cookies $COOKIE_FILE http://$SERVER/index.htm -O - |grep day |cut -d "<" -f 1`
+	rm -rf $COOKIE_FILE
+	exit $STATE_OK
+fi
+ 
+rm -rf $COOKIE_FILE
+exit $STATE_UNKNOWN
+

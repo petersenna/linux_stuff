@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# Event handler script for restarting Grandstream 486 ATA
+# Peter Senna Tschudin - peter.senna AT gmail.com
+#
+# REQUIRES THE check_grandstream486 Nagios plugin
+ 
+PASS= #ATA ADMIN PASSWORD GOES HERE
+
+STATE_OK=0
+STATE_WARNING=1
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+DELAY=180
+
+LOG_FILE=/usr/local/nagios/var/rebootgrandstream486.log
+COOKIE_FILE=/tmp/cookiesrg486.txt
+LOCK_FILE=/tmp/rebootgrandstream486_LOCK
+
+CHECK_GRANDSTREAM=/usr/local/nagios/libexec/check_grandstream486
+ 
+if [ -f $LOCK_FILE ]; then
+	echo "Lock file $LOCK_FILE exists. If this is incorrect, remove the lock file."
+	exit $STATE_UNKNOWN
+fi
+ 
+touch $LOCK_FILE
+ 
+function rebootgs {
+	ping -c 1 -w 3 $1 >/dev/null 2> /dev/null
+	if [ $? != 0 ];then
+		echo `date` unable to PING host >> $LOG_FILE
+		rm -rf $LOCK_FILE
+		exit $STATE_UNKNOWN
+	fi
+	rm -rf $COOKIE_FILE
+	/usr/bin/wget --keep-session-cookies --save-cookies $COOKIE_FILE --post-data "P2=$PASS" http://$1/dologin.htm -O - > /dev/null 2> /dev/null
+	/usr/bin/wget --load-cookies $COOKIE_FILE http://$1/update.htm -O - --post-data "reboot=Reboot" > /dev/null 2> /dev/null
+	/usr/bin/wget --load-cookies $COOKIE_FILE http://$1/rs.htm -O - > /dev/null 2> /dev/null
+	sleep 3
+	ping -c 1 -w 3 $1 >/dev/null 2> /dev/null
+	if [ $? != 1 ];then
+		echo `date` - Reboot failed >> $LOG_FILE
+		rm -rf $LOCK_FILE
+		exit $STATE_CRITICAL
+	fi
+	echo `date` - Reboot ok >> $LOG_FILE
+}
+ 
+while ( true ); do
+	$CHECK_GRANDSTREAM $1
+	if [ $? -eq 0 ]; then
+		echo `date` - ATA is Registered! >> $LOG_FILE
+		break
+	fi
+	echo `date` - Rebooting $1 $2 $3 $4 $5 >> $LOG_FILE
+	rebootgs $1
+	echo `date` - Giving time ATA to register >> $LOG_FILE
+	sleep $DELAY
+	let "DELAY=DELAY*2"
+	if [ DELAY > 1200 ]; then
+		DELAY=1200
+	fi
+done
+ 
+rm -rf $LOCK_FILE

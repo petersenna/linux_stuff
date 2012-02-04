@@ -1,0 +1,9 @@
+Nagios plugin and event handler for Grandstream 486 Voip ATA from the good old days...
+
+Nagios plugin:
+./usr/local/nagios/libexec/check_grandstream486
+http://goo.gl/gKg8L
+
+Event hadler:
+./usr/local/nagios/libexec/reboot_grandstream486
+http://goo.gl/VEhwE
