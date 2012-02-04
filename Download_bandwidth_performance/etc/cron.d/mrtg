@@ -1,0 +1,1 @@
+*/20 * * * * root LANG=C LC_ALL=C /usr/bin/mrtg /etc/mrtg/bandwidth.cfg --lock-file /var/lock/mrtg/mrtg_b --confcache-file /var/lib/mrtg/bandwidth.ok

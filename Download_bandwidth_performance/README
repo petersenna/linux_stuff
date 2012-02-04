@@ -1,0 +1,15 @@
+This script downloads two large files from different servers and measure the approximate bandwidth. This is useful for measuring the quality of your internet link over time.
+
+Note1: wget saves the downloaded files into a RAMDISK. The RAMDISK size is the tool used to define the maximum download size. Add to kernel line at grub.conf: 
+ramdisk_size=16384. 
+
+This will result in wget downloading only the first 16MB of the files.
+ 
+Note2: You need to calculate by hand the minimum time needed to download the RAMDISK SIZE with the maximum possible speed of your link.  My link has download speed of 15 Mbps / 1.875MBps. My RAMDISK size is 15.6MB. RAMDISK size / link speed = 8.3 seconds. Update number 7 in the two ifs...
+ 
+if [ $FirstTimeSpent -lt 7 ];then  
+if [ $SecondTimeSpent -lt 7 ];then 
+
+Note3: Be careful when using this script. You can easily get monthly gigabytes of data by setting too low cron delay, too high RAMDISK size or both.
+
+There may be more at: http://goo.gl/Kbrdj
