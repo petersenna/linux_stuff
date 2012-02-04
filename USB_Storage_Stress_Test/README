@@ -1,0 +1,3 @@
+USB Rocks! It is standard and works well most part of time. But sometimes things get unstable. Try to use long USB cables for 2.0 High Speed or try to carry out USB + VGA on same cable. When you need to test the USB for long time, this simple script can help you. Just take care about using the correct device for the test. Some host USB chipsets detec EMI and prints out some error messages. This is why some lines from /var/log/messages and /var/log/dmesg are shown.
+
+There may be more at: http://goo.gl/62flO
