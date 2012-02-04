@@ -2,7 +2,7 @@ The Linksys WAG200G Wireless-G ADSL Home Gateway has SNMP server that provides l
 of information, but not all. DSL Connection Status is not available trough SNMP. 
 A Bash script was made to get this data to generate graphs using MRTG.
 
-The data I'm collecting:
+The script get:
 	Downstream Rate in kbps
 	Upstream Rate in kbps
 	Downstream Margin in dB
