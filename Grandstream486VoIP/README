@@ -1,4 +1,4 @@
-Nagios plugin and event handler for Grandstream 486 Voip ATA from the good old days...
+Nagios plugin and event handler for Grandstream 486 Voip ATA from the good old days
 
 Nagios plugin:
 ./usr/local/nagios/libexec/check_grandstream486
