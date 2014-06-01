@@ -11,5 +11,3 @@ if [ $FirstTimeSpent -lt 7 ];then
 if [ $SecondTimeSpent -lt 7 ];then 
 
 Note3: Be careful when using this script. You can easily get monthly gigabytes of data by setting too low cron delay, too high RAMDISK size or both.
-
-There may be more at: http://goo.gl/Kbrdj
